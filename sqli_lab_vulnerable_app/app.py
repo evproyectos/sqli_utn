@@ -288,4 +288,4 @@ def logout():
 # ---------------------------------------------------------------
 if __name__ == "__main__":
     init_db()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=os.environ.get("FLASK_DEBUG", "false").lower() == "true")  # V-05: debug activado por variable de entorno
