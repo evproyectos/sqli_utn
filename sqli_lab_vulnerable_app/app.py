@@ -35,7 +35,8 @@ app = Flask(__name__)
 # En una aplicación real debe cargarse desde una variable de
 # entorno y nunca commitearse al repositorio.
 # ---------------------------------------------------------------
-app.config["SECRET_KEY"] = "dev-secret-key-insegura-1234"
+import os
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-local")  # V-04: Clave por defecto para pruebas
 
 
 # ---------------------------------------------------------------
