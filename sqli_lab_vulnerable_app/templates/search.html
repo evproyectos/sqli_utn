@@ -1,5 +1,4 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 
 <div class="page-header">
   <h1>🔍 Búsqueda de Libros</h1>
@@ -7,9 +6,15 @@
 
 <div class="card">
   <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="form-group">
       <label for="term">Término de búsqueda</label>
-      <input type="text" id="term" name="term" placeholder="Buscar por título, autor o categoría...">
+      <input
+        type="text"
+        id="term"
+        name="term"
+        placeholder="Buscar por título, autor o categoría..."
+      />
     </div>
     <button type="submit" class="btn-primary">Buscar</button>
   </form>
@@ -20,7 +25,12 @@
   <h3>Resultados ({{ books | length }} encontrados)</h3>
   <table class="data-table">
     <thead>
-      <tr><th>ID</th><th>Título</th><th>Autor</th><th>Categoría</th></tr>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Autor</th>
+        <th>Categoría</th>
+      </tr>
     </thead>
     <tbody>
       {% for book in books %}
@@ -38,6 +48,4 @@
 <div class="card">
   <p>No se encontraron resultados.</p>
 </div>
-{% endif %}
-
-{% endblock %}
+{% endif %} {% endblock %}

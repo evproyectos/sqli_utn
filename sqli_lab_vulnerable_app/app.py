@@ -22,6 +22,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf.csrf import CSRFProtect
 import sqlite3
 from pathlib import Path
 
@@ -29,6 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent
 DB_PATH  = BASE_DIR / "db" / "lab.db"
 
 app = Flask(__name__)
+csrf = CSRFProtect(app) # V-08: Protección CSRF activada
 
 # ---------------------------------------------------------------
 # V-04: SECRET_KEY hardcodeada en el código fuente.
@@ -165,23 +167,19 @@ def login():
         # V-01: Consulta vulnerable en UNA SOLA LÍNEA para que el comentario
         # SQL (--) funcione correctamente en SQLite y el payload surta efecto.
         # Payload de ejemplo: usuario = admin' --  / password = (cualquier cosa)
-        user = conn.execute(
-            "SELECT id, username, role FROM users WHERE username = ? AND password = ?",
-            (username, password)
-        ).fetchone()
 
         conn = get_connection()
         try:
             user = conn.execute(
-            "SELECT id, username, role FROM users WHERE username = ? AND password = ?",
-            (username, password)
+            "SELECT id, username, password, role FROM users WHERE username = ?",
+            (username,)
             ).fetchone()
         except Exception as e:
             # El error de SQLite se muestra directamente — también
             # es información sensible que no debe exponerse.
             flash(f"Error en la base de datos: {e}", "error")
             conn.close()
-            return render_template("login.html", last_query=query)
+            return render_template("login.html")
         conn.close()
 
         if user and check_password_hash(user["password"], password):
@@ -192,7 +190,7 @@ def login():
             flash("Inicio de sesión exitoso.", "success")
             return redirect(url_for("dashboard"))
 
-        log_event("LOGIN_FAIL", username, f"query={query}")
+        log_event("LOGIN_FAIL", username, f"username={username}")
         flash("Credenciales incorrectas.", "error")
 
     return render_template("login.html")
