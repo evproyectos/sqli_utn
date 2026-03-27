@@ -233,11 +233,12 @@ def search():
         # ---------------------------------------------------
         # V-02: Búsqueda vulnerable también en una sola línea.
         # Payload: %' UNION SELECT id, username, password, role FROM users --
-        raw_query = f"SELECT id, title, author, category FROM books WHERE title LIKE '%{term}%' OR author LIKE '%{term}%' OR category LIKE '%{term}%'"
+        param = f"%{term}%"  # El término se envuelve en % para el LIKE
+        raw_query = f"SELECT id, title, author, category FROM books WHERE title LIKE ? OR author LIKE ? OR category LIKE ?"
 
         conn = get_connection()
         try:
-            books = conn.execute(raw_query).fetchall()
+            books = conn.execute(raw_query, (param, param, param)).fetchall()
         except Exception as e:
             flash(f"Error en la base de datos: {e}", "error")
         conn.close()
