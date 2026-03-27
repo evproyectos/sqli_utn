@@ -9,7 +9,7 @@
   <form method="post">
     <div class="form-group">
       <label for="term">Término de búsqueda</label>
-      <input type="text" id="term" name="term" placeholder="Buscar por título, autor o categoría...">
+      <input type="text" id="term" name="term" value="{{ csrf_token() }}" placeholder="Buscar por título, autor o categoría...">
     </div>
     <button type="submit" class="btn-primary">Buscar</button>
   </form>
